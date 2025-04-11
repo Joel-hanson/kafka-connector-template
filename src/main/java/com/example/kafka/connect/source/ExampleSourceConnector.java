@@ -1,22 +1,21 @@
 package com.example.kafka.connect.source;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Example implementation of a Kafka Connect Source Connector.
- * This connector is responsible for:
- * 1. Defining configuration properties
- * 2. Instantiating and configuring tasks to pull data from external systems
- * 3. Partitioning the work across multiple tasks
+ * Example implementation of a Kafka Connect Source Connector. This connector is
+ * responsible for: 1. Defining configuration properties 2. Instantiating and
+ * configuring tasks to pull data from external systems 3. Partitioning the work
+ * across multiple tasks
  */
 public class ExampleSourceConnector extends SourceConnector {
     private static final Logger log = LoggerFactory.getLogger(ExampleSourceConnector.class);
