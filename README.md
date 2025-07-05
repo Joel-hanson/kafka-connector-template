@@ -20,6 +20,9 @@ A comprehensive template for creating Apache Kafka Connect source and sink conne
 - [Development](#development)
   - [Adding New Functionality](#adding-new-functionality)
   - [Testing](#testing)
+    - [Unit Tests](#unit-tests)
+    - [Integration Tests](#integration-tests)
+    - [Docker Compose Testing](#docker-compose-testing)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
@@ -148,13 +151,75 @@ curl -X POST -H "Content-Type: application/json" --data @config/json/sink-connec
 
 ### Testing
 
-Run the tests with:
+The project includes comprehensive unit and integration tests.
+
+#### Unit Tests
+
+Run unit tests with:
 
 ```bash
 mvn test
 ```
 
-Integration tests can be run with Docker Compose:
+#### Integration Tests
+
+The project includes extensive integration tests using TestContainers that verify end-to-end functionality with real Kafka infrastructure. These tests are based on the testing framework from the [Aiven JDBC Connector for Apache Kafka](https://github.com/Aiven-Open/jdbc-connector-for-apache-kafka).
+
+**Features:**
+- Real Kafka cluster using TestContainers
+- Source and Sink connector integration tests
+- End-to-end pipeline testing
+- Configuration validation tests
+- Performance testing
+- Error handling verification
+
+**Run integration tests:**
+
+```bash
+# Run all integration tests
+mvn verify
+
+# Use the convenient test runner script
+./run-integration-tests.sh all
+
+# Run specific test categories
+./run-integration-tests.sh sink     # Sink connector tests
+./run-integration-tests.sh source   # Source connector tests
+./run-integration-tests.sh e2e      # End-to-end tests
+./run-integration-tests.sh config   # Configuration tests
+```
+
+**Test Categories:**
+
+1. **Sink Connector Tests** (`ExampleSinkConnectorIntegrationTest`)
+   - Basic message consumption
+   - Multi-partition handling
+   - JSON message processing
+   - Performance testing
+   - Error scenarios
+
+2. **Source Connector Tests** (`ExampleSourceConnectorIntegrationTest`)
+   - Message production
+   - Multiple table handling
+   - Custom configurations
+   - Message format validation
+
+3. **End-to-End Tests** (`EndToEndIntegrationTest`)
+   - Complete data pipelines
+   - Data transformations
+   - Multi-topic processing
+   - Performance under load
+
+4. **Configuration Tests** (`ConnectorConfigurationIntegrationTest`)
+   - Configuration validation
+   - Default value verification
+   - Error handling
+
+For more details, see the [Integration Tests README](src/test/java/com/example/kafka/connect/integration/README.md).
+
+#### Docker Compose Testing
+
+You can also test with Docker Compose for manual verification:
 
 ```bash
 # Start the required services
