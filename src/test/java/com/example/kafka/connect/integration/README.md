@@ -115,7 +115,7 @@ topic.prefix=test-
 poll.interval.ms=5000
 batch.max.rows=100
 
-# Sink Connector  
+# Sink Connector
 connector.class=com.example.kafka.connect.sink.ExampleSinkConnector
 topics=test-topic
 batch.size=100
@@ -125,7 +125,8 @@ flush.timeout.ms=5000
 ### TestContainers Configuration
 
 Kafka cluster setup:
-- **Image**: confluentinc/cp-kafka:7.4.0
+
+- **Image**: apache/kafka:3.7.1
 - **Auto-create topics**: Disabled
 - **Network isolation**: Each test gets isolated network
 - **Startup timeout**: 5 minutes
@@ -214,10 +215,10 @@ public void testCustomScenario() throws Exception {
     // Setup
     Map<String, String> config = createCustomConfig();
     getConnectRunner().createConnector(config);
-    
+
     // Execute
     performTestActions();
-    
+
     // Verify
     await().atMost(Duration.ofSeconds(30))
            .untilAsserted(() -> {
