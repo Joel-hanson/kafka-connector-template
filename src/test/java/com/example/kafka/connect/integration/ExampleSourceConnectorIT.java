@@ -11,7 +11,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,28 +94,33 @@ public class ExampleSourceConnectorIT extends AbstractIT {
     }
 
     @Test
-    @Disabled
     public void testSourceConnectorTaskRestart() throws Exception {
         log.info("Testing source connector task restart");
 
         // Create and start the source connector
         Map<String, String> connectorConfig = createSourceConnectorConfig();
         connectorConfig.put("name", CONNECTOR_NAME + "-restart");
+        log.info("Creating connector with config: {}", connectorConfig);
         getConnectRunner().createConnector(connectorConfig);
 
         // Wait for initial message production
+        log.info("Waiting for initial message production...");
         await().atMost(Duration.ofSeconds(15)).pollInterval(Duration.ofSeconds(2)).untilAsserted(() -> {
             ConsumerRecords<String, String> records = consumeFromSourceTopic();
+            log.info("Initial check: consumed {} messages", records.count());
             assertThat(records.count()).isGreaterThan(0);
         });
 
         // Restart the connector task
+        log.info("Restarting connector task...");
         getConnectRunner().restartTask(CONNECTOR_NAME + "-restart", 0);
+        log.info("Task restart initiated");
 
         // Wait for connector to continue producing messages after restart
+        log.info("Waiting for message production after restart...");
         await().atMost(Duration.ofSeconds(30)).pollInterval(Duration.ofSeconds(2)).untilAsserted(() -> {
             ConsumerRecords<String, String> records = consumeFromSourceTopic();
-            log.info("Consumed {} messages after restart", records.count());
+            log.info("After restart: consumed {} messages", records.count());
 
             // Verify continuous message production after restart
             assertThat(records.count()).isGreaterThan(0);

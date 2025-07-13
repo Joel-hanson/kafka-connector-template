@@ -158,12 +158,6 @@
             <version>${kafka.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -174,8 +168,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <release>${java.version}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
 
@@ -226,6 +225,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+                <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading -Dlog4j.configurationFile=log4j2-test.xml</argLine>
+                    <systemPropertyVariables>
+                        <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <!-- Integration test plugin -->
@@ -234,6 +239,10 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading -Dlog4j.configurationFile=log4j2-test.xml</argLine>
+                    <systemPropertyVariables>
+                        <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
+                    </systemPropertyVariables>
                     <includes>
                         <include>**/*IT.java</include>
                         <include>**/*IntegrationTest.java</include>

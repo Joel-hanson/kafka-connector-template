@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- Console appender with detailed pattern for debugging -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %-50.50logger{50} - %msg%n" />
+        </Console>
+
+        <!-- File appender for integration tests -->
+        <File name="TestFile" fileName="target/integration-test.log">
+            <PatternLayout pattern="%d{ISO8601} [%t] %-5level %-50.50logger{50} - %msg%n" />
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <!-- Your connector classes - set to DEBUG to see all connector logs -->
+        <Logger name="com.example.kafka.connect" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Specific connector task loggers -->
+        <Logger name="com.example.kafka.connect.source.ExampleSourceTask" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <Logger name="com.example.kafka.connect.source.ExampleSourceConnector" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <Logger name="com.example.kafka.connect.sink.ExampleSinkTask" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <Logger name="com.example.kafka.connect.sink.ExampleSinkConnector" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Kafka Connect runtime logs -->
+        <Logger name="org.apache.kafka.connect.runtime" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Worker and task logs -->
+        <Logger name="org.apache.kafka.connect.runtime.Worker" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Task execution logs -->
+        <Logger name="org.apache.kafka.connect.runtime.WorkerSourceTask" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <Logger name="org.apache.kafka.connect.runtime.WorkerSinkTask" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Herder logs for connector lifecycle -->
+        <Logger name="org.apache.kafka.connect.runtime.standalone.StandaloneHerder" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Offset storage logs -->
+        <Logger name="org.apache.kafka.connect.storage" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Test infrastructure logs -->
+        <Logger name="com.example.kafka.connect.integration" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- ConnectRunner logs -->
+        <Logger name="com.example.kafka.connect.integration.ConnectRunner" level="DEBUG"
+            additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Reduce noise from Kafka clients -->
+        <Logger name="org.apache.kafka.clients" level="WARN" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Reduce noise from TestContainers -->
+        <Logger name="org.testcontainers" level="INFO" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Reduce noise from Docker -->
+        <Logger name="com.github.dockerjava" level="WARN" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFile" />
+        </Root>
+    </Loggers>
+</Configuration>
