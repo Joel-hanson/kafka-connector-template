@@ -222,10 +222,6 @@ public final class ConnectRunner {
         workerProps.put(DistributedConfig.KEY_CONVERTER_CLASS_CONFIG, "org.apache.kafka.connect.json.JsonConverter");
         workerProps.put(DistributedConfig.VALUE_CONVERTER_CLASS_CONFIG, "org.apache.kafka.connect.json.JsonConverter");
 
-        // Enable logging for converters
-        workerProps.put("key.converter.schemas.enable", "false");
-        workerProps.put("value.converter.schemas.enable", "false");
-
         // Plugin path
         workerProps.put(DistributedConfig.PLUGIN_PATH_CONFIG, pluginDir.toString());
 
