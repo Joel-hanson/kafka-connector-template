@@ -193,7 +193,6 @@ This project is configured to work with Java 11, 17, and 21. Maven profiles auto
 - `java11` - Activated when using Java 11
 - `java17` - Activated when using Java 17  
 - `java21` - Activated when using Java 21
-- `preview-features` - Enables Java preview features (manual activation)
 
 ### Adding New Functionality
 
@@ -221,9 +220,7 @@ The project includes extensive integration tests using TestContainers that verif
 
 - Real Kafka cluster using TestContainers
 - Source and Sink connector integration tests
-- End-to-end pipeline testing
 - Configuration validation tests
-- Performance testing
 - Error handling verification
 
 **Run integration tests:**
@@ -231,15 +228,6 @@ The project includes extensive integration tests using TestContainers that verif
 ```bash
 # Run all integration tests
 mvn verify
-
-# Use the convenient test runner script
-./run-integration-tests.sh all
-
-# Run specific test categories
-./run-integration-tests.sh sink     # Sink connector tests
-./run-integration-tests.sh source   # Source connector tests
-./run-integration-tests.sh e2e      # End-to-end tests
-./run-integration-tests.sh config   # Configuration tests
 ```
 
 **Test Categories:**
@@ -257,13 +245,7 @@ mvn verify
    - Custom configurations
    - Message format validation
 
-3. **End-to-End Tests** (`EndToEndIntegrationTest`)
-   - Complete data pipelines
-   - Data transformations
-   - Multi-topic processing
-   - Performance under load
-
-4. **Configuration Tests** (`ConnectorConfigurationIntegrationTest`)
+3. **Configuration Tests** (`ConnectorConfigurationIntegrationTest`)
    - Configuration validation
    - Default value verification
    - Error handling
