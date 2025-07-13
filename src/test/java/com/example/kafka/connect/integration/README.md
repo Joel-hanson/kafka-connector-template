@@ -31,13 +31,6 @@ The integration tests verify the end-to-end functionality of both Source and Sin
    - Message format validation
    - Performance testing
 
-3. **EndToEndIntegrationTest**: Complete pipeline tests
-   - Source → Kafka → Sink data flow
-   - Data transformations
-   - Error handling
-   - Multi-topic processing
-   - Performance under load
-
 4. **ConnectorConfigurationIntegrationTest**: Configuration validation tests
    - Valid/invalid configuration scenarios
    - Default value verification
@@ -82,7 +75,10 @@ The tests use TestContainers to provide:
 ### Execute Tests
 
 ```bash
-# Run all integration tests
+# You have to build the project first
+mvn clean install -DskipTests
+
+# Run all tests including unit and integration
 mvn verify
 
 # Run only integration tests
@@ -92,7 +88,7 @@ mvn failsafe:integration-test
 mvn test -Dtest=ExampleSinkConnectorIntegrationTest
 
 # Run with specific profile
-mvn verify -Pintegration-tests
+mvn integration-tests
 ```
 
 ### Maven Configuration
@@ -128,7 +124,7 @@ flush.timeout.ms=5000
 
 Kafka cluster setup:
 
-- **Image**: apache/kafka:3.7.1
+- **Image**: apache/kafka:3.9.1
 - **Auto-create topics**: Disabled
 - **Network isolation**: Each test gets isolated network
 - **Startup timeout**: 5 minutes
@@ -143,13 +139,6 @@ Kafka cluster setup:
 4. **Logging**: Comprehensive test logging
 5. **Assertions**: Clear and specific assertions
 
-### Performance Testing
-
-- **Baseline Metrics**: Establish performance baselines
-- **Scalability**: Test with varying message volumes
-- **Resource Usage**: Monitor memory and CPU usage
-- **Throughput**: Verify messages per second rates
-
 ### Error Scenarios
 
 - **Configuration Errors**: Invalid parameter handling
@@ -163,16 +152,17 @@ Kafka cluster setup:
 
 1. **Docker Not Available**
 
-   ```
+   ```shell
    Caused by: java.lang.IllegalStateException: Could not find a valid Docker environment
    ```
 
    - Ensure Docker is running
    - Check Docker socket permissions
+   - If you are having arm64 and have issues using rancher desktop, try switching to colima or docker desktop. Also for rancher desktop, ensure you have configured docker.socket correctly.
 
 2. **Port Conflicts**
 
-   ```
+   ```shell
    Caused by: org.testcontainers.containers.ContainerLaunchException: Container startup failed
    ```
 
@@ -181,7 +171,7 @@ Kafka cluster setup:
 
 3. **Timeout Issues**
 
-   ```
+   ```shell
    Condition was not fulfilled within 30 seconds
    ```
 
