@@ -18,6 +18,7 @@ A comprehensive template for creating Apache Kafka Connect source and sink conne
   - [Source Connector Configuration](#source-connector-configuration)
   - [Sink Connector Configuration](#sink-connector-configuration)
 - [Development](#development)
+  - [Java Version Support](#java-version-support)
   - [Adding New Functionality](#adding-new-functionality)
   - [Testing](#testing)
     - [Unit Tests](#unit-tests)
@@ -50,10 +51,46 @@ The template includes proper configuration classes, comprehensive tests, Docker 
 
 ## Prerequisites
 
-- Java 11 or higher
-- Maven 3.6.3 or higher
-- Docker and Docker Compose (for local development)
-- Apache Kafka 3.x (or preferred version)
+- **Java**: Java 11, 17, or 21 (LTS versions recommended)
+- **Maven**: 3.6.3 or higher
+- **Docker and Docker Compose**: For local development and testing
+- **Apache Kafka**: 3.x (or preferred version)
+
+### Java Version Compatibility
+
+This project supports multiple Java versions through Maven profiles:
+
+- **Java 11**: Minimum supported version (default)
+- **Java 17**: Recommended for production use
+- **Java 21**: Latest LTS version with enhanced performance
+
+#### Testing with Different Java Versions
+
+```bash
+# Test with Java 11 (default)
+mvn clean test
+
+# Explicitly test with Java 17
+mvn clean test -Pjava17
+
+# Test with Java 21
+mvn clean test -Pjava21
+
+# Enable preview features (for testing newer Java features)
+mvn clean test -Ppreview-features
+```
+
+#### Setting Java Version via Environment
+
+You can also override the Java version using Maven properties:
+
+```bash
+# Compile for Java 17
+mvn clean compile -Dmaven.compiler.source=17 -Dmaven.compiler.target=17
+
+# Compile for Java 21
+mvn clean compile -Dmaven.compiler.source=21 -Dmaven.compiler.target=21
+```
 
 ## Getting Started
 
@@ -142,6 +179,21 @@ curl -X POST -H "Content-Type: application/json" --data @config/json/sink-connec
 ```
 
 ## Development
+
+### Java Version Support
+
+This project is configured to work with Java 11, 17, and 21. Maven profiles automatically detect and configure the appropriate Java version:
+
+- **Automatic Detection**: Maven profiles activate based on the detected Java version
+- **Cross-Platform**: Works on all major operating systems
+- **CI/CD**: GitHub Actions test against all supported Java versions
+
+### Available Maven Profiles
+
+- `java11` - Activated when using Java 11
+- `java17` - Activated when using Java 17  
+- `java21` - Activated when using Java 21
+- `preview-features` - Enables Java preview features (manual activation)
 
 ### Adding New Functionality
 

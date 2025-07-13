@@ -6,7 +6,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>kafka-connector-template</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>Kafka Connector Template</name>
@@ -31,20 +31,30 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Dependency versions -->
+        <!-- Default to Java 11 for maximum compatibility -->
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+
+        <!-- Plugin versions - ensure compatibility with all Java versions -->
+        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
+        <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>
+
+        <!-- Dependency versions - compatible with Java 11+ -->
         <kafka.version>3.9.1</kafka.version>
-        <junit.version>5.9.2</junit.version>
-        <mockito.version>5.2.0</mockito.version>
+        <junit.version>5.11.4</junit.version>
+        <mockito.version>5.15.2</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j.version>2.20.0</log4j.version>
-        <assertj.version>3.23.1</assertj.version>
+        <log4j.version>2.24.3</log4j.version>
+        <assertj.version>3.26.3</assertj.version>
         <testcontainers.version>1.21.3</testcontainers.version>
         <awaitility.version>4.3.0</awaitility.version>
-        <commonio.version>2.11.0</commonio.version>
+        <commonio.version>2.18.0</commonio.version>
     </properties>
 
     <dependencies>
@@ -166,9 +176,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <release>${java.version}</release>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                         <arg>-Xlint:deprecation</arg>
@@ -182,7 +194,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -197,7 +209,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven.assembly.plugin.version}</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -224,9 +236,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading -Dlog4j.configurationFile=log4j2-test.xml</argLine>
                     <systemPropertyVariables>
                         <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
                     </systemPropertyVariables>
@@ -237,9 +248,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${maven.failsafe.plugin.version}</version>
                 <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading -Dlog4j.configurationFile=log4j2-test.xml</argLine>
+                    <argLine>-XX:+EnableDynamicAgentLoading
+                        -Dlog4j.configurationFile=log4j2-test.xml</argLine>
                     <systemPropertyVariables>
                         <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
                     </systemPropertyVariables>
@@ -286,4 +298,154 @@
             </plugin> -->
         </plugins>
     </build>
+
+    <!-- Profiles for different Java versions -->
+    <profiles>
+        <!-- Java 11 profile (default) -->
+        <profile>
+            <id>java11</id>
+            <activation>
+                <jdk>[11,17)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.release>11</maven.compiler.release>
+            </properties>
+        </profile>
+
+        <!-- Java 17 profile -->
+        <profile>
+            <id>java17</id>
+            <activation>
+                <jdk>[17,21)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
+                <maven.compiler.release>17</maven.compiler.release>
+            </properties>
+        </profile>
+
+        <!-- Java 21 profile -->
+        <profile>
+            <id>java21</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>21</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.release>21</maven.compiler.release>
+            </properties>
+        </profile>
+
+        <!-- Profile for Java 17+ specific configurations -->
+        <profile>
+            <id>java17-plus</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.io=ALL-UNNAMED
+                                --add-opens java.base/java.util=ALL-UNNAMED
+                                --add-opens java.base/java.nio=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-opens java.base/java.net=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                                --add-opens java.base/java.time=ALL-UNNAMED
+                                --add-opens java.logging/java.util.logging=ALL-UNNAMED
+                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                                --add-opens java.base/java.text=ALL-UNNAMED
+                                --add-opens java.desktop/java.awt.font=ALL-UNNAMED
+                                --add-opens java.base/sun.security.util=ALL-UNNAMED
+                                --add-opens java.base/sun.net.util=ALL-UNNAMED
+                                -Dlog4j.configurationFile=log4j2-test.xml
+                            </argLine>
+                            <systemPropertyVariables>
+                                <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.io=ALL-UNNAMED
+                                --add-opens java.base/java.util=ALL-UNNAMED
+                                --add-opens java.base/java.nio=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-opens java.base/java.net=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                                --add-opens java.base/java.time=ALL-UNNAMED
+                                --add-opens java.logging/java.util.logging=ALL-UNNAMED
+                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                                --add-opens java.base/java.text=ALL-UNNAMED
+                                --add-opens java.desktop/java.awt.font=ALL-UNNAMED
+                                --add-opens java.base/sun.security.util=ALL-UNNAMED
+                                --add-opens java.base/sun.net.util=ALL-UNNAMED
+                                -XX:+EnableDynamicAgentLoading
+                                -Dlog4j.configurationFile=log4j2-test.xml
+                            </argLine>
+                            <systemPropertyVariables>
+                                <log4j.configurationFile>log4j2-test.xml</log4j.configurationFile>
+                            </systemPropertyVariables>
+                            <includes>
+                                <include>**/*IT.java</include>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for enabling preview features (useful for newer Java versions) -->
+        <profile>
+            <id>preview-features</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>--enable-preview</arg>
+                                <arg>-Xlint:unchecked</arg>
+                                <arg>-Xlint:deprecation</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--enable-preview -Dlog4j.configurationFile=log4j2-test.xml</argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>--enable-preview -XX:+EnableDynamicAgentLoading
+                                -Dlog4j.configurationFile=log4j2-test.xml</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

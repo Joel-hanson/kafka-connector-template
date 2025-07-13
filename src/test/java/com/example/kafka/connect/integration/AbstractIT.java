@@ -66,7 +66,7 @@ public abstract class AbstractIT {
 
     private static Path setupPluginDir() throws Exception {
         final Path testDir = Files.createTempDirectory("kafka-connector-template-");
-        final String destFilePath = "./target/kafka-connector-template-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
+        final String destFilePath = "./target/kafka-connector-template-0.0.2-jar-with-dependencies.jar";
         final Path distFile = Paths.get(destFilePath);
         assert Files.exists(distFile);
 

@@ -24,7 +24,7 @@ public class ExampleSinkConnector extends SinkConnector {
 
     @Override
     public final String version() {
-        return "0.0.1";
+        return "0.0.2";
     }
 
     @Override

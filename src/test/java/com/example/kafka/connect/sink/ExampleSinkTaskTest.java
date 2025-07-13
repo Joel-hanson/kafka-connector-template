@@ -32,6 +32,6 @@ class ExampleSinkTaskTest {
 
     @Test
     void testVersion() {
-        assertEquals("1.0.0", task.version());
+        assertEquals("0.0.2", task.version());
     }
 }
