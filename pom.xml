@@ -36,7 +36,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Dependency versions -->
-        <kafka.version>4.0.0</kafka.version>
+        <kafka.version>3.9.1</kafka.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>5.2.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
@@ -154,26 +154,9 @@
         <!-- Test-scoped runtime dependencies for integration tests -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>connect-runtime</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>connect-json</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
             <artifactId>connect-transforms</artifactId>
             <version>${kafka.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

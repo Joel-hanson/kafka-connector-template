@@ -32,31 +32,31 @@ print_error() {
 # Function to check prerequisites
 check_prerequisites() {
     print_info "Checking prerequisites..."
-    
+
     # Check Java
-    if ! command -v java &> /dev/null; then
+    if ! command -v java &>/dev/null; then
         print_error "Java is not installed or not in PATH"
         exit 1
     fi
-    
+
     # Check Maven
-    if ! command -v mvn &> /dev/null; then
+    if ! command -v mvn &>/dev/null; then
         print_error "Maven is not installed or not in PATH"
         exit 1
     fi
-    
+
     # Check Docker
-    if ! command -v docker &> /dev/null; then
+    if ! command -v docker &>/dev/null; then
         print_error "Docker is not installed or not in PATH"
         exit 1
     fi
-    
+
     # Check if Docker is running
-    if ! docker info &> /dev/null; then
+    if ! docker info &>/dev/null; then
         print_error "Docker is not running. Please start Docker and try again."
         exit 1
     fi
-    
+
     print_success "All prerequisites met"
 }
 
@@ -126,7 +126,7 @@ show_reports() {
     print_info "Test reports location:"
     echo "  - Failsafe reports: target/failsafe-reports/"
     echo "  - Surefire reports: target/surefire-reports/"
-    
+
     if [ -d "target/failsafe-reports" ]; then
         echo ""
         print_info "Recent test results:"
@@ -170,48 +170,48 @@ show_usage() {
 # Main script logic
 main() {
     case "${1:-help}" in
-        "all")
-            check_prerequisites
-            build_project
-            run_all_tests
-            show_reports
-            ;;
-        "sink")
-            check_prerequisites
-            build_project
-            run_sink_tests
-            ;;
-        "source")
-            check_prerequisites
-            build_project
-            run_source_tests
-            ;;
-        "e2e")
-            check_prerequisites
-            build_project
-            run_e2e_tests
-            ;;
-        "config")
-            check_prerequisites
-            build_project
-            run_config_tests
-            ;;
-        "build")
-            check_prerequisites
-            build_project
-            ;;
-        "reports")
-            show_reports
-            ;;
-        "cleanup")
-            cleanup
-            ;;
-        "check")
-            check_prerequisites
-            ;;
-        "help"|*)
-            show_usage
-            ;;
+    "all")
+        check_prerequisites
+        build_project
+        run_all_tests
+        show_reports
+        ;;
+    "sink")
+        check_prerequisites
+        build_project
+        run_sink_tests
+        ;;
+    "source")
+        check_prerequisites
+        build_project
+        run_source_tests
+        ;;
+    "e2e")
+        check_prerequisites
+        build_project
+        run_e2e_tests
+        ;;
+    "config")
+        check_prerequisites
+        build_project
+        run_config_tests
+        ;;
+    "build")
+        check_prerequisites
+        build_project
+        ;;
+    "reports")
+        show_reports
+        ;;
+    "cleanup")
+        cleanup
+        ;;
+    "check")
+        check_prerequisites
+        ;;
+    "help" | *)
+        show_usage
+        ;;
     esac
 }
 

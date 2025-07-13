@@ -166,6 +166,7 @@ mvn test
 The project includes extensive integration tests using TestContainers that verify end-to-end functionality with real Kafka infrastructure. These tests are based on the testing framework from the [Aiven JDBC Connector for Apache Kafka](https://github.com/Aiven-Open/jdbc-connector-for-apache-kafka).
 
 **Features:**
+
 - Real Kafka cluster using TestContainers
 - Source and Sink connector integration tests
 - End-to-end pipeline testing
