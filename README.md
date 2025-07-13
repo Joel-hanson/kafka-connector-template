@@ -5,6 +5,8 @@
 
 A comprehensive template for creating Apache Kafka Connect source and sink connectors, built with Maven. This template provides a foundation for developing production-ready connectors with proper configuration, testing, and deployment capabilities.
 
+## :page_facing_up: [Blog Post - Build Custom Kafka Connectors Fast with This Open-Source Template](https://joel-hanson.github.io/posts/13-build-custom-kafka-connectors-fast-with-this-open-source-template/)
+
 ## Table of Contents
 
 - [Overview](#overview)
