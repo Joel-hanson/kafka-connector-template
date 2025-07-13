@@ -49,6 +49,7 @@ The integration tests verify the end-to-end functionality of both Source and Sin
 ### TestContainers Integration
 
 The tests use TestContainers to provide:
+
 - Real Kafka cluster
 - Isolated test environments
 - Automatic cleanup
@@ -97,6 +98,7 @@ mvn verify -Pintegration-tests
 ### Maven Configuration
 
 The integration tests are configured with:
+
 - **maven-failsafe-plugin**: Executes integration tests
 - **TestContainers**: Provides Kafka infrastructure
 - **Awaitility**: Asynchronous testing utilities
@@ -160,23 +162,29 @@ Kafka cluster setup:
 ### Common Issues
 
 1. **Docker Not Available**
+
    ```
    Caused by: java.lang.IllegalStateException: Could not find a valid Docker environment
    ```
+
    - Ensure Docker is running
    - Check Docker socket permissions
 
 2. **Port Conflicts**
+
    ```
    Caused by: org.testcontainers.containers.ContainerLaunchException: Container startup failed
    ```
+
    - TestContainers handles port allocation automatically
    - Check for conflicting services
 
 3. **Timeout Issues**
+
    ```
    Condition was not fulfilled within 30 seconds
    ```
+
    - Increase timeout values
    - Check system resources
    - Review test logic
@@ -184,6 +192,7 @@ Kafka cluster setup:
 ### Debug Mode
 
 Enable debug logging:
+
 ```bash
 mvn verify -Dlogback.configurationFile=logback-debug.xml
 ```
@@ -191,6 +200,7 @@ mvn verify -Dlogback.configurationFile=logback-debug.xml
 ### Container Logs
 
 Access container logs for debugging:
+
 ```bash
 # Enable TestContainers debug
 export TESTCONTAINERS_DEBUG=true
@@ -233,6 +243,7 @@ public void testCustomScenario() throws Exception {
 ### GitHub Actions
 
 Example CI configuration:
+
 ```yaml
 name: Integration Tests
 on: [push, pull_request]
@@ -252,6 +263,7 @@ jobs:
 ### Test Reports
 
 Tests generate reports in:
+
 - `target/failsafe-reports/`: Surefire reports
 - `target/site/jacoco/`: Code coverage
 - Container logs in TestContainers output

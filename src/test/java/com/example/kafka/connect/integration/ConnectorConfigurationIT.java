@@ -1,26 +1,27 @@
 package com.example.kafka.connect.integration;
 
-import com.example.kafka.connect.sink.ExampleSinkConnector;
-import com.example.kafka.connect.source.ExampleSourceConnector;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.common.config.Config;
 import org.apache.kafka.common.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.example.kafka.connect.sink.ExampleSinkConnector;
+import com.example.kafka.connect.source.ExampleSourceConnector;
 
 /**
- * Integration tests for connector configuration validation.
- * Tests configuration parsing, validation, and error handling.
+ * Integration tests for connector configuration validation. Tests configuration
+ * parsing, validation, and error handling.
  */
-public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTest {
+public class ConnectorConfigurationIT extends AbstractIT {
 
-    private static final Logger log = LoggerFactory.getLogger(ConnectorConfigurationIntegrationTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectorConfigurationIT.class);
 
     @Test
     public void testSinkConnectorValidConfiguration() {
@@ -35,8 +36,8 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
         // Check that there are no errors
         List<ConfigValue> configValues = validatedConfig.configValues();
         for (ConfigValue configValue : configValues) {
-            log.info("Config: {} = {}, Errors: {}",
-                    configValue.name(), configValue.value(), configValue.errorMessages());
+            log.info("Config: {} = {}, Errors: {}", configValue.name(), configValue.value(),
+                    configValue.errorMessages());
 
             // Assert no configuration errors
             assertThat(configValue.errorMessages()).isEmpty();
@@ -58,8 +59,8 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
         // Check that there are no errors
         List<ConfigValue> configValues = validatedConfig.configValues();
         for (ConfigValue configValue : configValues) {
-            log.info("Config: {} = {}, Errors: {}",
-                    configValue.name(), configValue.value(), configValue.errorMessages());
+            log.info("Config: {} = {}, Errors: {}", configValue.name(), configValue.value(),
+                    configValue.errorMessages());
 
             // Assert no configuration errors
             assertThat(configValue.errorMessages()).isEmpty();
@@ -85,8 +86,7 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
         for (ConfigValue configValue : configValues) {
             if (!configValue.errorMessages().isEmpty()) {
                 hasErrors = true;
-                log.info("Expected error for config {}: {}",
-                        configValue.name(), configValue.errorMessages());
+                log.info("Expected error for config {}: {}", configValue.name(), configValue.errorMessages());
             }
         }
 
@@ -113,8 +113,7 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
         for (ConfigValue configValue : configValues) {
             if (!configValue.errorMessages().isEmpty()) {
                 hasErrors = true;
-                log.info("Expected error for config {}: {}",
-                        configValue.name(), configValue.errorMessages());
+                log.info("Expected error for config {}: {}", configValue.name(), configValue.errorMessages());
             }
         }
 
@@ -173,7 +172,7 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
 
         List<Map<String, String>> sourceTaskConfigs = sourceConnector.taskConfigs(1);
         assertThat(sourceTaskConfigs).hasSize(1);
-        assertThat(sourceTaskConfigs.get(0)).containsKey("topic.prefix");
+        assertThat(sourceTaskConfigs.get(0)).containsKey("topic");
 
         sourceConnector.stop();
 
@@ -271,7 +270,8 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
     }
 
     /**
-     * Creates an invalid source connector configuration (missing required properties)
+     * Creates an invalid source connector configuration (missing required
+     * properties)
      */
     private Map<String, String> createInvalidSourceConfig() {
         Map<String, String> config = new HashMap<>();
@@ -289,8 +289,7 @@ public class ConnectorConfigurationIntegrationTest extends AbstractIntegrationTe
         List<ConfigValue> configValues = config.configValues();
 
         for (ConfigValue configValue : configValues) {
-            log.info("{} connector default - {}: {}",
-                    connectorType, configValue.name(), configValue.value());
+            log.info("{} connector default - {}: {}", connectorType, configValue.name(), configValue.value());
         }
 
         // Verify that required configurations are present
