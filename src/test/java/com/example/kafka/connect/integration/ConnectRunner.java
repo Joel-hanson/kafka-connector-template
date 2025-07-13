@@ -17,29 +17,28 @@
 package com.example.kafka.connect.integration;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.policy.AllConnectorClientConfigOverridePolicy;
 import org.apache.kafka.connect.connector.policy.ConnectorClientConfigOverridePolicy;
-import org.apache.kafka.connect.json.JsonConverter;
-import org.apache.kafka.connect.json.JsonConverterConfig;
 import org.apache.kafka.connect.runtime.Connect;
 import org.apache.kafka.connect.runtime.ConnectorConfig;
 import org.apache.kafka.connect.runtime.Herder;
 import org.apache.kafka.connect.runtime.Worker;
 import org.apache.kafka.connect.runtime.distributed.DistributedConfig;
 import org.apache.kafka.connect.runtime.isolation.Plugins;
+import org.apache.kafka.connect.runtime.isolation.Plugins.ClassLoaderUsage;
 import org.apache.kafka.connect.runtime.rest.ConnectRestServer;
 import org.apache.kafka.connect.runtime.rest.RestClient;
 import org.apache.kafka.connect.runtime.rest.entities.ConnectorInfo;
 import org.apache.kafka.connect.runtime.standalone.StandaloneHerder;
+import org.apache.kafka.connect.storage.Converter;
 import org.apache.kafka.connect.storage.KafkaOffsetBackingStore;
 import org.apache.kafka.connect.storage.OffsetBackingStore;
-import org.apache.kafka.connect.util.ConnectUtils;
 import org.apache.kafka.connect.util.ConnectorTaskId;
 import org.apache.kafka.connect.util.FutureCallback;
 import org.apache.kafka.connect.util.TopicAdmin;
@@ -141,20 +140,26 @@ public final class ConnectRunner {
         LOGGER.info("Starting embedded Kafka Connect runtime with bootstrap servers: {}", bootstrapServers);
 
         final Map<String, String> workerProps = createWorkerConfig();
+        LOGGER.debug("Worker configuration: {}", workerProps);
 
         final Time time = Time.SYSTEM;
         final String workerId = "test-worker";
         final String kafkaClusterId = "test-cluster";
 
+        LOGGER.debug("Initializing plugins from path: {}", pluginDir);
         final Plugins plugins = new Plugins(workerProps);
         final DistributedConfig config = new DistributedConfig(workerProps);
 
         final ConnectorClientConfigOverridePolicy overridePolicy = new AllConnectorClientConfigOverridePolicy();
 
         // Initialize offset backing store
+        LOGGER.debug("Creating Kafka-based offset backing store for topic: {}", OFFSET_TOPIC);
         final OffsetBackingStore offsetBackingStore = createOffsetBackingStore(config, plugins);
 
+        LOGGER.debug("Creating worker with ID: {}", workerId);
         worker = new Worker(workerId, time, plugins, config, offsetBackingStore, overridePolicy);
+
+        LOGGER.debug("Creating herder for cluster: {}", kafkaClusterId);
         herder = new StandaloneHerder(worker, kafkaClusterId, overridePolicy);
 
         final RestClient restClient = new RestClient(config);
@@ -162,7 +167,9 @@ public final class ConnectRunner {
         restServer.initializeServer();
         restServer.initializeResources(herder);
 
-        connect = new Connect(herder, restServer);
+        LOGGER.debug("Starting Connect runtime...");
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Connect<StandaloneHerder> connect = new Connect(herder, restServer);
         connect.start();
 
         started = true;
@@ -215,6 +222,10 @@ public final class ConnectRunner {
         workerProps.put(DistributedConfig.KEY_CONVERTER_CLASS_CONFIG, "org.apache.kafka.connect.json.JsonConverter");
         workerProps.put(DistributedConfig.VALUE_CONVERTER_CLASS_CONFIG, "org.apache.kafka.connect.json.JsonConverter");
 
+        // Enable logging for converters
+        workerProps.put("key.converter.schemas.enable", "false");
+        workerProps.put("value.converter.schemas.enable", "false");
+
         // Plugin path
         workerProps.put(DistributedConfig.PLUGIN_PATH_CONFIG, pluginDir.toString());
 
@@ -223,21 +234,40 @@ public final class ConnectRunner {
         workerProps.put(DistributedConfig.CONFIG_TOPIC_CONFIG, CONFIG_TOPIC);
         workerProps.put(DistributedConfig.STATUS_STORAGE_TOPIC_CONFIG, STATUS_TOPIC);
 
+        // Enhanced logging configuration for debugging
+        LOGGER.debug("Worker configuration: {}", workerProps);
+
         return workerProps;
     }
 
     private OffsetBackingStore createOffsetBackingStore(final DistributedConfig config, final Plugins plugins) {
-        final Map<String, Object> topicConfig = config.originals();
-        // topicConfig.remove("offset.storage.topic");
-        topicConfig.put("offset.storage.topic", "connect-offsets-test");
-        final TopicAdmin sharedTopicAdmin = new TopicAdmin(topicConfig);
+        // Use Kafka-based offset store for proper distributed operation
+        // This stores offsets in the connect-offsets topic
 
-        final KafkaOffsetBackingStore offsetBackingStore = new KafkaOffsetBackingStore(() -> sharedTopicAdmin,
-                () -> ConnectUtils.clientIdBase(config),
-                plugins.newInternalConverter(true, JsonConverter.class.getName(),
-                        Collections.singletonMap(JsonConverterConfig.SCHEMAS_ENABLE_CONFIG, "false")));
+        // Create a proper TopicAdmin for managing offset topic
+        final Supplier<TopicAdmin> topicAdminSupplier = () -> {
+            final Map<String, Object> adminConfig = new HashMap<>();
+            adminConfig.put("bootstrap.servers", bootstrapServers);
+            adminConfig.put("client.id", "connect-worker-offset-admin");
+            return new TopicAdmin(adminConfig);
+        };
+
+        // Create a supplier for the offset topic name
+        final Supplier<String> offsetTopicSupplier = () -> OFFSET_TOPIC;
+
+        // Create key converter for offset storage
+        final Converter keyConverter = plugins.newConverter(config, "key.converter",
+                ClassLoaderUsage.CURRENT_CLASSLOADER);
+
+        // Configure the key converter
+        final Map<String, Object> converterConfig = new HashMap<>();
+        converterConfig.put("schemas.enable", "false");
+        keyConverter.configure(converterConfig, true);
+
+        // Create KafkaOffsetBackingStore with required parameters
+        final KafkaOffsetBackingStore offsetBackingStore = new KafkaOffsetBackingStore(topicAdminSupplier,
+                offsetTopicSupplier, keyConverter);
         offsetBackingStore.configure(config);
-        offsetBackingStore.start();
         return offsetBackingStore;
     }
 

@@ -246,8 +246,11 @@ public abstract class AbstractIT {
             throw new IllegalStateException("Plugin directory does not exist: " + pluginDir);
         }
         log.info("Using plugin directory: {}", pluginDir.toAbsolutePath());
+        log.info("Bootstrap servers for Connect: {}", kafkaContainer.getBootstrapServers());
         connectRunner = new ConnectRunner(kafkaContainer.getBootstrapServers(), pluginDir);
+        log.info("Starting Connect runtime...");
         connectRunner.start();
+        log.info("Kafka Connect setup completed successfully");
     }
 
     /**
